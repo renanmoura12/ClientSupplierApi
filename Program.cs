@@ -6,10 +6,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.Db(builder.Configuration);
 
 builder.Services.AddScoped<IRepository, Repository>();
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddNewtonsoftJson(options =>
+{
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+});
 
 builder.Services.AddEndpointsApiExplorer();
-
 
 builder.Services.SwaggerInfra(builder.Configuration);
 builder.Services.AddAutoMapper(typeof(Program).Assembly);

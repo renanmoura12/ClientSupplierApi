@@ -19,6 +19,8 @@ namespace ClientSupplierApi.Data
         Task<bool> LoginAsync(string name, string password);
         Task<Customer_supplier> GetCustomerSupplier(int id);
         Task<IEnumerable<UsersResponse>> GetAllUsuariosAsync();
+        Task<IEnumerable<CustomerSupplierResponse>> GetFiltersCustomerSupplier(string? cpfCnpj, int? type, string? name, string? country, string? city, string? email, int? id, int pageNumber = 1, int pageSize = 10);
+
 
     }
 }

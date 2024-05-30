@@ -8,19 +8,16 @@ namespace ClientSupplierApi.Models
         [Key]
         public int Id { get; set; }
         public int CustomerSupplierId { get; set; }
-        public string Phone { get; private set; }
+        public string Phone { get; set; }
 
         [EmailAddress(ErrorMessage = "Forneça um email válido")]
-        public string Email { get; private set; }
+        public string Email { get; set; }
 
         public Customer_supplier CustomerSupplier { get; set; }
 
-        public Customer_supplier_contact()
-        {
-                
-        }
+        public Customer_supplier_contact() { }
 
-        public Customer_supplier_contact( int customerSupplierId, string phone, string email)
+        public Customer_supplier_contact(int customerSupplierId, string phone, string email)
         {
             ValidateDomain(customerSupplierId, phone, email);
         }
