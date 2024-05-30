@@ -8,9 +8,17 @@ namespace ClientSupplierApi.Models
     {
         [Key]
         public int Id { get; set; }
-        public string Name { get; private set; }
+        public string Name { get; set; }
         public string CpfCnpj { get; set; }
-        public CustomerSupplierEnum Type { get; private set; }
+        public CustomerSupplierEnum Type { get; set; }
+
+        public Customer_supplier_contact Contact { get; set; }
+        public Customer_supplier_address Address { get; set; }
+
+        public Customer_supplier()
+        {
+
+        }
 
         public Customer_supplier(string name, CustomerSupplierEnum type, string cpfCnpj)
         {

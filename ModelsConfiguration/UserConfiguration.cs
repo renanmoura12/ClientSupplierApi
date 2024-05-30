@@ -8,7 +8,7 @@ namespace ClientSupplierApi.ModelsConfiguration
     {
         public void Configure(EntityTypeBuilder<Users> builder)
         {
-            builder.Property(a => a.Email).HasMaxLength(200).IsRequired();    
+            builder.Property(a => a.Email).HasMaxLength(200).IsRequired();
             builder.Property(a => a.UserName).HasMaxLength(50).IsRequired();
         }
     }

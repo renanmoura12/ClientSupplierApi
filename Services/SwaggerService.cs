@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Reflection;
 using System.Text;
 
 namespace ClientSupplierApi.Services
@@ -12,6 +13,7 @@ namespace ClientSupplierApi.Services
             services.AddSwaggerGen(a =>
             {
                 a.SwaggerDoc("v1", new OpenApiInfo { Title = "Client/Supplier API", Version = "v1" });
+
                 a.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     In = ParameterLocation.Header,
@@ -34,6 +36,11 @@ namespace ClientSupplierApi.Services
                             Array.Empty<string>()
                         }
                     });
+
+
+                string xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                string xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                a.IncludeXmlComments(xmlPath);
 
             });
 

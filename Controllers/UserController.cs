@@ -28,7 +28,7 @@ namespace ClientSupplierApi.Controllers
 
         [HttpPost("register")]
         [ProducesResponseType(typeof(TokenResponse), 200)]
-        public async Task<IActionResult> AddNewUser([FromBody]UserDto user) 
+        public async Task<IActionResult> AddNewUser([FromBody] UserDto user)
         {
             try
             {
@@ -62,7 +62,7 @@ namespace ClientSupplierApi.Controllers
 
                 return BadRequest("Algo deu errado, verifique!");
             }
-            catch (Exception) 
+            catch (Exception)
             {
                 return BadRequest("Algo deu errado, verifique!");
 
@@ -75,7 +75,7 @@ namespace ClientSupplierApi.Controllers
         {
             var userExist = await _repository.GetEmailByName(login.UserName);
 
-            if(userExist.UserName == null)
+            if (userExist.UserName == null)
             {
                 return NotFound("Nenhum registro localizado, registre para fazer o login");
             }

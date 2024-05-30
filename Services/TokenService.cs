@@ -20,7 +20,7 @@ namespace ClientSupplierApi.Services
                     new Claim(ClaimTypes.Email, email)
                 }),
 
-                Expires = DateTime.UtcNow.AddHours(2),
+                Expires = DateTime.UtcNow.AddMinutes(30),
 
                 SigningCredentials =
                 new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
