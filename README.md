@@ -22,3 +22,7 @@ ou veja online: https://customer-supplier-api-3433ad5e3d94.herokuapp.com/swagger
 
 Crie um usuario em "User/register". Em seguida faça login em "User/login".
 Após isso autentique no "Authorize" do swagger copiando somente o token.
+
+## Método patch Json.
+
+Foi escolhido esse tipo para alteração parcial das informações, no proprio endpoint encontrará mais informações.
