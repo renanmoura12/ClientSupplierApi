@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ClientSupplierApi.Enums;
 using ClientSupplierApi.Models;
 using ClientSupplierApi.Response;
 using Microsoft.EntityFrameworkCore;
@@ -9,39 +10,39 @@ namespace ClientSupplierApi.Data
 {
     public class Repository : IRepository
     {
-        public DataContext _context { get; }
+        public DataContext context { get; }
         private readonly IMapper _mapper;
 
         public Repository(DataContext context, IMapper mapper)
         {
-            _context = context;
+            this.context = context;
             _mapper = mapper;
         }
 
         //==========================Genericas======================
         public void Add<T>(T entity) where T : class
         {
-            _context.Add(entity);
+            context.Add(entity);
         }
 
         public void Delete<T>(T entity) where T : class
         {
-            _context.Remove(entity);
+            context.Remove(entity);
         }
 
         public void Update<T>(T entity) where T : class
         {
-            _context.Update(entity);
+            context.Update(entity);
         }
 
         public async Task<bool> SaveChangesAsync()
         {
-            return (await _context.SaveChangesAsync() > 0);
+            return (await context.SaveChangesAsync() > 0);
         }
 
         public async Task<bool> UserExistAsync(string email, string userName)
         {
-            var user = await _context.Users
+            var user = await context.Users
                 .AsNoTracking()
                 .FirstOrDefaultAsync(a => a.Email == email || a.UserName == userName);
 
@@ -53,7 +54,7 @@ namespace ClientSupplierApi.Data
 
         public async Task<Users> GetEmailByName(string name)
         {
-            var user = await _context.Users
+            var user = await context.Users
                 .AsNoTracking()
                 .FirstOrDefaultAsync(a => a.UserName == name);
 
@@ -68,7 +69,7 @@ namespace ClientSupplierApi.Data
 
         public async Task<bool> LoginAsync(string name, string password)
         {
-            var user = await _context.Users
+            var user = await context.Users
                 .AsNoTracking()
                 .FirstOrDefaultAsync(a => a.UserName == name);
 
@@ -89,7 +90,7 @@ namespace ClientSupplierApi.Data
 
         public async Task<IEnumerable<UsersResponse>> GetAllUsuariosAsync()
         {
-            var users = await _context.Users
+            var users = await context.Users
                 .AsNoTracking()
                 .ToListAsync();
 
@@ -101,7 +102,7 @@ namespace ClientSupplierApi.Data
 
         public async Task<bool> CustomerSupplierExistAsync(string name, string cpfCnpj)
         {
-            var customerSupplier = await _context.Customer_Supplier
+            var customerSupplier = await context.Customer_Supplier
                 .AsNoTracking()
                 .FirstOrDefaultAsync(a => a.Name == name || a.CpfCnpj == cpfCnpj);
 
@@ -113,8 +114,9 @@ namespace ClientSupplierApi.Data
 
         public async Task<Customer_supplier> GetCustomerSupplier(int id)
         {
-            var customerSupplier = await _context.Customer_Supplier
-                .AsNoTracking()
+            var customerSupplier = await context.Customer_Supplier
+                .Include(a => a.Contact)
+                .Include(a => a.Address)
                 .FirstOrDefaultAsync(a => a.Id == id);
 
             if (customerSupplier == null)
@@ -124,6 +126,46 @@ namespace ClientSupplierApi.Data
             }
 
             return customerSupplier;
+        }
+
+        public async Task<IEnumerable<CustomerSupplierResponse>> GetFiltersCustomerSupplier(
+            string? cpfCnpj, int? type, string? name,
+            string? country, string? city, string? email, int? id,
+            int pageNumber = 1, int pageSize = 10)
+        {
+            var query = context.Customer_Supplier
+                .AsNoTracking()
+                .Include(a => a.Contact)
+                .Include(a => a.Address)
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(cpfCnpj))
+                query = query.Where(c => c.CpfCnpj == cpfCnpj);
+            if (type.HasValue)
+            {
+                var typeValue = (CustomerSupplierEnum)type.Value;
+                query = query.Where(c => c.Type == typeValue);
+            }
+            if (!string.IsNullOrEmpty(name))
+                query = query.Where(c => c.Name.Contains(name));
+            if (!string.IsNullOrEmpty(country))
+                query = query.Where(c => c.Address.Country == country);
+            if (!string.IsNullOrEmpty(city))
+                query = query.Where(c => c.Address.City == city);
+            if (!string.IsNullOrEmpty(email))
+                query = query.Where(c => c.Contact.Email == email);
+            if (id.HasValue)
+                query = query.Where(c => c.Id == id);
+
+            var result = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            var objMapeado = _mapper.Map<IEnumerable<CustomerSupplierResponse>>(result);
+
+            return objMapeado;
+
         }
     }
 }
